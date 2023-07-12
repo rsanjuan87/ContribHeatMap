@@ -6,8 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
+
+// import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+// import 'package:responsive_sizer/responsive_sizer.dart';
+
+import 'flutter_heatmap/data/heatmap_color_mode.dart';
+import 'flutter_heatmap/heatmap.dart';
 
 class GitHubConfig {
   final String username;
@@ -19,21 +23,21 @@ class GitHubConfig {
   });
 }
 
-class GitLabConfig {
-  final String username;
-  final String token;
+class GitLabConfig extends GitHubConfig {
+  // final String username;
+  // final String token;
   final String? host;
 
   GitLabConfig({
-    required this.username,
-    required this.token,
+    required super.username,
+    required super.token,
     this.host,
   });
 }
 
-class GithubActivityWidget extends StatefulWidget {
-  final GitHubConfig? gitHubConfig;
-  final gitlabConfig;
+class ActivityWidget extends StatefulWidget {
+  // final GitHubConfig? gitHubConfig;
+  final config;
 
   final double? size;
   final Color color;
@@ -42,56 +46,65 @@ class GithubActivityWidget extends StatefulWidget {
   final ColorMode mode;
   final Color defaultColor;
 
-  GithubActivityWidget({
-    this.gitHubConfig,
-    this.gitlabConfig,
+  ActivityWidget({
+    // this.gitHubConfig,
+    this.config,
     this.color = Colors.blue,
     this.size,
     this.bol = false,
     this.mode = ColorMode.opacity,
     this.defaultColor = Colors.white10,
   }) {
-    if (gitlabConfig != null &&
-        gitlabConfig! is GitLabConfig &&
-        gitlabConfig! is List<GitLabConfig>) {
+    if (config != null &&
+        config! is GitHubConfig &&
+        config! is List<GitHubConfig>) {
       throw Exception(
-          'gitlabConfig must be of type GitLabConfig or List<GitLabConfig>');
+          'config must be of type GitLabConfig, GitLabConfig or List<GitHubConfig or GitLabConfig>\n'
+          '"$config"');
     }
     ;
   }
 
   @override
-  _GithubActivityWidgetState createState() => _GithubActivityWidgetState();
+  _ActivityWidgetState createState() => _ActivityWidgetState();
 }
 
-class _GithubActivityWidgetState extends State<GithubActivityWidget> {
+class _ActivityWidgetState extends State<ActivityWidget> {
   Map<DateTime, int> activityDates = {};
 
   @override
   void initState() {
     super.initState();
-    if (widget.gitHubConfig != null) {
-      fetchGitHub();
-    }
-    if (widget.gitlabConfig != null) {
+    // if (widget.gitHubConfig != null) {
+    //   fetchGitHub();
+    // }
+    if (widget.config != null) {
       fetchActivityGitLab();
     }
   }
 
   Future<void> fetchActivityGitLab() async {
     activityDates = {};
-    if (widget.gitlabConfig is GitLabConfig) {
-      fetchActivity(widget.gitlabConfig);
-    } else if (widget.gitlabConfig is List<GitLabConfig>) {
-      widget.gitlabConfig.forEach((element) => fetchActivity(element));
+    if (widget.config is GitLabConfig) {
+      fetchActivity(widget.config);
+    } else if (widget.config is GitHubConfig) {
+      fetchGitHub(widget.config);
+    } else if (widget.config is List) {
+      for (var element in widget.config) {
+        if (element is GitLabConfig) {
+          fetchActivity(element);
+        } else if (element is GitHubConfig) {
+          fetchGitHub(element);
+        }
+      }
     }
     setState(() {});
   }
 
-  Future<void> fetchGitHub() async {
+  Future<void> fetchGitHub(config) async {
     String query = '''
        query {
-         user(login: "${widget.gitHubConfig?.username}") {
+         user(login: "${config?.username}") {
            contributionsCollection {
              contributionCalendar {
                totalContributions
@@ -110,7 +123,7 @@ class _GithubActivityWidgetState extends State<GithubActivityWidget> {
     final response = await http.post(
       Uri.parse('https://api.github.com/graphql'),
       headers: {
-        'Authorization': 'Bearer ${widget.gitHubConfig?.token}',
+        'Authorization': 'Bearer ${config?.token}',
         'Content-Type': 'application/json',
       },
       body: jsonEncode({'query': query}),
@@ -130,8 +143,8 @@ class _GithubActivityWidgetState extends State<GithubActivityWidget> {
                 days: Random(date.millisecondsSinceEpoch).nextInt(30)));
           }
 
-          activityDates[date] = (activityDates[date] ?? 0) + (day['contributionCount'] as int);
-
+          activityDates[date] =
+              (activityDates[date] ?? 0) + (day['contributionCount'] as int);
         });
       });
 
@@ -142,23 +155,34 @@ class _GithubActivityWidgetState extends State<GithubActivityWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveSizer(
-      builder: (context, orientation, screenType) {
-        return HeatMap(
-          scrollable: true,
-          colorMode: widget.mode,
-          size: widget.size ??
-              (Device.orientation == Orientation.landscape ? 1.3.w : 1.h),
-          borderRadius: 3,
-          fontSize: 0,
-          colorsets: {0: widget.color},
-          defaultColor: widget.defaultColor,
-          datasets: activityDates,
-          showColorTip: false,
-          showText: false,
-        );
+    // return ResponsiveSizer(
+    //   builder: (context, orientation, screenType) {
+    Size size = MediaQuery.of(context).size;
+    return HeatMap(
+      scrollable: false,
+      colorMode: widget.mode,
+      size: widget.size ?? size.width * .0155,
+      borderRadius: 3,
+      colorsets: {0: widget.color},
+      defaultColor: widget.defaultColor,
+      datasets: activityDates,
+      showColorLegend: false,
+      showText: false,
+      fontSize: 0,
+      onClick: (date, count) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('${date.toString().substring(0, 10)} $count')));
+      },
+      tooltipGenerator: (v, d) {
+        if (v == 0) {
+          return null;
+        }
+        return 'Contributions: ${v.toString()}\n'
+            'Date : ${d.toString().substring(0, 10)}';
       },
     );
+    // },
+    // );
   }
 
   Future<void> fetchActivity(GitLabConfig gitlabConfig) async {
@@ -195,8 +219,14 @@ class _GithubActivityWidgetState extends State<GithubActivityWidget> {
                 days: Random(date.millisecondsSinceEpoch).nextInt(30)));
           }
 
-          int v = e['push_data']?['commit_count'] ?? 0;
-          activityDates[date] = (activityDates[date] ?? 0) + v;
+          // int v = e['push_data']?['commit_count'] ?? 0;
+          if (e['action_name'] == 'pushed new' ||
+              e['action_name'] == 'pushed to') {
+            // v = v;
+            activityDates[date] = (activityDates[date] ?? 0) + 1; //v;
+          } else {
+            // v = 0;
+          }
         });
         setState(() {});
       }

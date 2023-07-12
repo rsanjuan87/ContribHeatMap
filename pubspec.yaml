@@ -11,10 +11,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_heatmap_calendar: #^1.0.5
-    path: ../flutter_heatmap_calendar
+#  flutter_heatmap_calendar: #^1.0.5
+#    path: ../flutter_heatmap_calendar
+##    git: https://github.com/rsanjuan87/flutter_heatmap_calendar.git
   http: ^0.13.5
-  responsive_sizer: ^3.1.1
+#  responsive_sizer: ^3.1.1
+  webview_flutter: ^4.2.1
 
 dev_dependencies:
   flutter_test:

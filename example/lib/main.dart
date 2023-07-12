@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:activity_graph/GitHubActivityGraph.dart';
-import 'package:activity_graph/GitlabActivityGraph.dart';
+import 'package:activity_graph/ActivityGraph.dart';
+import 'package:activity_graph/flutter_heatmap/data/heatmap_color_mode.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+// import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 
 import 'env.dart';
 
@@ -43,59 +43,63 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       // backgroundColor: Colors.blueGrey,
       body: Container(
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                  'https://images.unsplash.com/photo-1604351031298-fe2920584c66?ixid=MnwxMTI1OHwwfDF8cmFuZG9tfHx8fHx8fHx8MTY4Mjc2NjAyNA&ixlib=rb-4.0.3&q=85&w=1920',
+        // decoration: const BoxDecoration(
+        //     image: DecorationImage(
+        //       image: NetworkImage(
+        //         'https://images.unsplash.com/photo-1604351031298-fe2920584c66?ixid=MnwxMTI1OHwwfDF8cmFuZG9tfHx8fHx8fHx8MTY4Mjc2NjAyNA&ixlib=rb-4.0.3&q=85&w=1920',
+        //       ),
+        //       fit: BoxFit.cover,
+        //     )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                //https://git.topgroups.travel/users/rsanjuan87/calendar_activities?date=2023-3-23
+                //https://github.com/rsanjuan87?from=2022-08-17&to=2022-08-17&tab=overview
+                ActivityWidget(
+                  config: GitHubConfig(
+                    username: 'rsanjuan87',
+                    token: githubKey,
+                  ),
+                  color: Colors.green.shade900,
+                  mode: ColorMode.lightOpacity,
+                  defaultColor: Colors.white.withAlpha(10),
                 ),
-                fit: BoxFit.cover,
-              )),
-          child:
-          ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              child: Center(
-                child: Stack(
-                  children: [
-                    GithubActivityWidget(
-                      // gitHubConfig: GitHubConfig(
-                      //   username: 'rsanjuan87',
-                      //   token: githubKey,
-                      // ),
-                      gitlabConfig: [
-                        GitLabConfig(
-                          username: 'rsanjuan87',
-                          token: gitlabKey_top,
-                          host: 'git.topgroupexpress.com',
-                        ),
-                        GitLabConfig(
-                          username: 'rsanjuan87',
-                          token: gitlabKey,
-                        ),
-                      ],
-                      color: Colors.deepOrange.shade900,
-                      mode: ColorMode.lightOpacity,
-                      defaultColor: Colors.white.withAlpha(10),
-                    ),
-                    GithubActivityWidget(
-                      gitHubConfig: GitHubConfig(
-                        username: 'rsanjuan87',
-                        token: githubKey,
-                      ),
-                      // gitlabConfig: GitLabConfig(
-                      //   username: 'rsanjuan87',
-                      //   token: gitlabKey_top,
-                      //   host: 'git.topgroupexpress.com',
-                      // ),
-                      color: Colors.green.shade900,
-                      mode: ColorMode.light,
-                      defaultColor: Colors.white.withAlpha(10),
-                    ),
-                  ],
+                ActivityWidget(
+                  config: GitLabConfig(
+                    username: 'rsanjuan87',
+                    token: gitlabKey_top,
+                    host: 'git.topgroups.travel',
+                  ),
+                  color: Colors.orange.shade900,
+                  mode: ColorMode.light,
+                  defaultColor: Colors.white.withAlpha(10),
                 ),
-              ),
+              ],
             ),
-          ),
+            ActivityWidget(
+              config: GitHubConfig(
+                username: 'rsanjuan87',
+                token: githubKey,
+              ),
+              color: Colors.green.shade900,
+              mode: ColorMode.lightOpacity,
+              defaultColor: Colors.white.withAlpha(10),
+            ),
+            ActivityWidget(
+              config: GitLabConfig(
+                username: 'rsanjuan87',
+                token: gitlabKey_top,
+                host: 'git.topgroups.travel',
+              ),
+              color: Colors.orange.shade900,
+              mode: ColorMode.light,
+              defaultColor: Colors.white.withAlpha(10),
+            ),
+          ],
+        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
