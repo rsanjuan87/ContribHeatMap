@@ -1,9 +1,8 @@
 import 'dart:ui';
 
 import 'package:activity_graph/ActivityGraph.dart';
-import 'package:activity_graph/flutter_heatmap/data/heatmap_color_mode.dart';
+import 'package:activity_graph/flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 
 import 'env.dart';
 
@@ -62,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   config: GitHubConfig(
                     username: 'rsanjuan87',
                     token: githubKey,
+                    color: Colors.green.shade900,
                   ),
                   color: Colors.green.shade900,
                   mode: ColorMode.lightOpacity,
@@ -72,17 +72,37 @@ class _MyHomePageState extends State<MyHomePage> {
                     username: 'rsanjuan87',
                     token: gitlabKey_top,
                     host: 'git.topgroups.travel',
+                    color: Colors.orange.shade900,
                   ),
                   color: Colors.orange.shade900,
-                  mode: ColorMode.light,
+                  mode: ColorMode.lightOpacity,
                   defaultColor: Colors.white.withAlpha(10),
                 ),
               ],
             ),
             ActivityWidget(
+              config: [
+                GitHubConfig(
+                  username: 'rsanjuan87',
+                  token: githubKey,
+                  color: Colors.blue.shade900,
+                ),
+                GitLabConfig(
+                  username: 'rsanjuan87',
+                  token: gitlabKey_top,
+                  host: 'git.topgroups.travel',
+                  color: Colors.blue.shade900,
+                )
+              ],
+              color: Colors.blue.shade900,
+              mode: ColorMode.lightOpacity,
+              defaultColor: Colors.white.withAlpha(10),
+            ),
+            ActivityWidget(
               config: GitHubConfig(
                 username: 'rsanjuan87',
                 token: githubKey,
+                color: Colors.green.shade900,
               ),
               color: Colors.green.shade900,
               mode: ColorMode.lightOpacity,
@@ -93,9 +113,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 username: 'rsanjuan87',
                 token: gitlabKey_top,
                 host: 'git.topgroups.travel',
+                color: Colors.orange.shade900,
               ),
               color: Colors.orange.shade900,
-              mode: ColorMode.light,
+              mode: ColorMode.lightOpacity,
               defaultColor: Colors.white.withAlpha(10),
             ),
           ],

@@ -7,19 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-// import 'package:responsive_sizer/responsive_sizer.dart';
-
-import 'flutter_heatmap/data/heatmap_color_mode.dart';
-import 'flutter_heatmap/heatmap.dart';
+import 'flutter_heatmap_calendar/src/data/heatmap_color_mode.dart';
+import 'flutter_heatmap_calendar/src/heatmap.dart';
 
 class GitHubConfig {
   final String username;
   final String token;
+  final Color? color;
 
   GitHubConfig({
     required this.username,
     required this.token,
+    required this.color,
   });
 }
 
@@ -31,6 +30,7 @@ class GitLabConfig extends GitHubConfig {
   GitLabConfig({
     required super.username,
     required super.token,
+    required super.color,
     this.host,
   });
 }
@@ -40,8 +40,10 @@ class ActivityWidget extends StatefulWidget {
   final config;
 
   final double? size;
+
+  @deprecated
   final Color color;
-  final bool bol;
+  final bool randomize;
 
   final ColorMode mode;
   final Color defaultColor;
@@ -51,7 +53,7 @@ class ActivityWidget extends StatefulWidget {
     this.config,
     this.color = Colors.blue,
     this.size,
-    this.bol = false,
+    this.randomize = false,
     this.mode = ColorMode.opacity,
     this.defaultColor = Colors.white10,
   }) {
@@ -70,7 +72,7 @@ class ActivityWidget extends StatefulWidget {
 }
 
 class _ActivityWidgetState extends State<ActivityWidget> {
-  Map<DateTime, int> activityDates = {};
+  Map<DateTime, Map<GitHubConfig, int>> activityDates = {};
 
   @override
   void initState() {
@@ -133,20 +135,26 @@ class _ActivityWidgetState extends State<ActivityWidget> {
 
       List weeks = responseData['data']['user']['contributionsCollection']
           ['contributionCalendar']['weeks'];
-      weeks.forEach((element) {
+      for (var element in weeks) {
         List days = element['contributionDays'];
-        days.forEach((day) {
+        for (var day in days) {
           DateTime date = DateTime.parse(day['date']);
 
-          if (widget.bol) {
+          if (widget.randomize) {
             date = date.subtract(Duration(
                 days: Random(date.millisecondsSinceEpoch).nextInt(30)));
           }
 
-          activityDates[date] =
-              (activityDates[date] ?? 0) + (day['contributionCount'] as int);
-        });
-      });
+          Map<GitHubConfig, int> map = activityDates[date] ?? {};
+          int c = map[config] ?? 0;
+
+          map[config] = c + (day['contributionCount'] as int);
+          activityDates[date] = map;
+
+          // activityDates[date][config] = (activityDates[date][config] ?? 0) +
+          //     (day['contributionCount'] as int);
+        }
+      }
 
       // print(activityDates);
       setState(() {});
@@ -161,7 +169,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
     return HeatMap(
       scrollable: false,
       colorMode: widget.mode,
-      size: widget.size ?? size.width * .0155,
+      size: widget.size ?? size.width * .013,
       borderRadius: 3,
       colorsets: {0: widget.color},
       defaultColor: widget.defaultColor,
@@ -185,17 +193,17 @@ class _ActivityWidgetState extends State<ActivityWidget> {
     // );
   }
 
-  Future<void> fetchActivity(GitLabConfig gitlabConfig) async {
+  Future<void> fetchActivity(GitLabConfig config) async {
     bool wasEmpty = false;
     int page = 0;
     do {
-      String url = 'https://${gitlabConfig.host ?? 'gitlab.com'}/api/v4/users/'
-          '${gitlabConfig.username}/events?per_page=100&page=${page++}';
+      String url = 'https://${config.host ?? 'gitlab.com'}/api/v4/users/'
+          '${config.username}/events?per_page=100&page=${page++}';
 
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'Authorization': 'Bearer ${gitlabConfig.token}',
+          'Authorization': 'Bearer ${config.token}',
           'Content-Type': 'application/json',
         },
       );
@@ -203,7 +211,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
         List responseData = json.decode(response.body);
 
         wasEmpty = responseData.isEmpty;
-        responseData.forEach((e) {
+        for (var e in responseData) {
           DateTime date =
               DateTime.parse(e['created_at'].toString().substring(0, 10))
                   .copyWith(
@@ -214,7 +222,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
             microsecond: 0,
           );
 
-          if (widget.bol) {
+          if (widget.randomize) {
             date = date.subtract(Duration(
                 days: Random(date.millisecondsSinceEpoch).nextInt(30)));
           }
@@ -223,11 +231,15 @@ class _ActivityWidgetState extends State<ActivityWidget> {
           if (e['action_name'] == 'pushed new' ||
               e['action_name'] == 'pushed to') {
             // v = v;
-            activityDates[date] = (activityDates[date] ?? 0) + 1; //v;
-          } else {
-            // v = 0;
+
+            Map<GitHubConfig, int> map = activityDates[date] ?? {};
+            int c = map[config] ?? 0;
+
+            map[config] = c + 1;
+            activityDates[date] = map;
+
           }
-        });
+        }
         setState(() {});
       }
     } while (!wasEmpty);
