@@ -78,11 +78,14 @@ class HeatMapColumn extends StatelessWidget {
   /// Function that will be called to generate tooltip.
   String? Function(int, DateTime)? tooltipGenerator;
 
+  final int configsCount;
+
   HeatMapColumn({
     Key? key,
     required this.startDate,
     required this.endDate,
     required this.colorMode,
+    required this.configsCount,
     required this.numDays,
     this.size,
     this.fontSize,
@@ -114,6 +117,9 @@ class HeatMapColumn extends StatelessWidget {
             //     0);
 
             var w = HeatMapContainer(
+              configsCount: configsCount,
+              colorMode: colorMode,
+              maxValue: maxValue,
               map: map??{},
               date: DateUtil.changeDay(startDate, i),
               backgroundColor: defaultColor,
@@ -144,11 +150,8 @@ class HeatMapColumn extends StatelessWidget {
                           colorMode,
                           colorsets,
                           maxValue,
-                          i,
-                          startDate,
-                          endDate,
-                          datasets,
                           defaultColor,
+                          count
                         )
                       : null,
             );
@@ -175,18 +178,19 @@ class HeatMapColumn extends StatelessWidget {
         super(key: key);
 
   static getColor(ColorMode colorMode, Map<int, Color>? colorsets,
-      int? maxValue, int i, startDate, endDate, datasets, defaultColor) {
+      int? maxValue, defaultColor, int value) {
     Color? color;
     var cMode = colorMode;
     if ((colorsets?.keys.length ?? 0) == 1 && colorMode == ColorMode.color) {
       cMode = ColorMode.light;
     }
 
-    double v = (datasets?[DateTime(startDate.year, startDate.month,
+    double v = /*(datasets?[DateTime(startDate.year, startDate.month,
                         startDate.day + i - (startDate.weekday % 7))]
                     as Map<GitHubConfig, int>? ??
                 {})
-            .total /
+            .total*/
+    value /
         (maxValue ?? 1);
     switch (cMode) {
       case ColorMode.lightOpacity:
@@ -199,10 +203,7 @@ class HeatMapColumn extends StatelessWidget {
         color = colorsets?.values.first.withOpacity(v);
         break;
       case ColorMode.color:
-        color = DatasetsUtil.getColor(
-            colorsets,
-            datasets?[DateTime(startDate.year, startDate.month,
-                startDate.day + i - (startDate.weekday % 7))]);
+        color = colorsets?.values.first;
         break;
     }
 

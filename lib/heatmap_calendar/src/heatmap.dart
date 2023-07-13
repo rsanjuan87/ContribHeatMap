@@ -92,6 +92,8 @@ class HeatMap extends StatefulWidget {
   /// Function that will be called to generate tooltip.
   final String? Function(int, DateTime)? tooltipGenerator;
 
+  final int configsCount;
+
   const HeatMap({
     Key? key,
     required this.colorsets,
@@ -113,6 +115,7 @@ class HeatMap extends StatefulWidget {
     this.colorTipCount,
     this.colorTipSize,
     this.tooltipGenerator,
+    required this.configsCount,
   }) : super(key: key);
 
   @override
@@ -153,6 +156,7 @@ class _HeatMap extends State<HeatMap> {
           margin: widget.margin,
           showText: widget.showText,
           tooltipGenerator: widget.tooltipGenerator,
+            configsCount: widget.configsCount,
         )),
 
         // Show HeatMapColorTip if showColorTip is true.

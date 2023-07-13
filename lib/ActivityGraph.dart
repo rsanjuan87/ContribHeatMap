@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'flutter_heatmap_calendar/src/data/heatmap_color_mode.dart';
-import 'flutter_heatmap_calendar/src/heatmap.dart';
+import 'heatmap_calendar/src/data/heatmap_color_mode.dart';
+import 'heatmap_calendar/src/heatmap.dart';
+
 
 class GitHubConfig {
   final String username;
@@ -42,7 +43,6 @@ class ActivityWidget extends StatefulWidget {
   final double? size;
 
   @deprecated
-  final Color color;
   final bool randomize;
 
   final ColorMode mode;
@@ -51,7 +51,6 @@ class ActivityWidget extends StatefulWidget {
   ActivityWidget({
     // this.gitHubConfig,
     this.config,
-    this.color = Colors.blue,
     this.size,
     this.randomize = false,
     this.mode = ColorMode.opacity,
@@ -171,8 +170,9 @@ class _ActivityWidgetState extends State<ActivityWidget> {
       colorMode: widget.mode,
       size: widget.size ?? size.width * .013,
       borderRadius: 3,
-      colorsets: {0: widget.color},
+      colorsets: {0: Colors.green.shade900},
       defaultColor: widget.defaultColor,
+      configsCount: widget.config is List ? widget.config.length : 1,
       datasets: activityDates,
       showColorLegend: false,
       showText: false,

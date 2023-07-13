@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:activity_graph/ActivityGraph.dart';
-import 'package:activity_graph/flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:activity_graph/heatmap_calendar/src/data/heatmap_color_mode.dart';
 import 'package:flutter/material.dart';
 
 import 'env.dart';
@@ -49,77 +49,78 @@ class _MyHomePageState extends State<MyHomePage> {
         //       ),
         //       fit: BoxFit.cover,
         //     )),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                //https://git.topgroups.travel/users/rsanjuan87/calendar_activities?date=2023-3-23
-                //https://github.com/rsanjuan87?from=2022-08-17&to=2022-08-17&tab=overview
-                ActivityWidget(
-                  config: GitHubConfig(
+        child: Container(
+          color: Colors.black,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Stack(
+              //   children: [
+              //     //https://git.topgroups.travel/users/rsanjuan87/calendar_activities?date=2023-3-23
+              //     //https://github.com/rsanjuan87?from=2022-08-17&to=2022-08-17&tab=overview
+              //     ActivityWidget(
+              //       config: GitHubConfig(
+              //         username: 'rsanjuan87',
+              //         token: githubKey,
+              //         color: Colors.green.shade900,
+              //       ),
+              //       color: Colors.green.shade900,
+              //       mode: ColorMode.lightOpacity,
+              //       defaultColor: Colors.white.withAlpha(10),
+              //     ),
+              //     ActivityWidget(
+              //       config: GitLabConfig(
+              //         username: 'rsanjuan87',
+              //         token: gitlabKey_top,
+              //         host: 'git.topgroups.travel',
+              //         color: Colors.orange.shade900,
+              //       ),
+              //       color: Colors.orange.shade900,
+              //       mode: ColorMode.lightOpacity,
+              //       defaultColor: Colors.white.withAlpha(10),
+              //     ),
+              //   ],
+              // ),
+              ActivityWidget(
+                config: [
+                  GitHubConfig(
                     username: 'rsanjuan87',
                     token: githubKey,
                     color: Colors.green.shade900,
                   ),
-                  color: Colors.green.shade900,
-                  mode: ColorMode.lightOpacity,
-                  defaultColor: Colors.white.withAlpha(10),
-                ),
-                ActivityWidget(
-                  config: GitLabConfig(
+                  GitLabConfig(
                     username: 'rsanjuan87',
                     token: gitlabKey_top,
                     host: 'git.topgroups.travel',
-                    color: Colors.orange.shade900,
-                  ),
-                  color: Colors.orange.shade900,
-                  mode: ColorMode.lightOpacity,
-                  defaultColor: Colors.white.withAlpha(10),
-                ),
-              ],
-            ),
-            ActivityWidget(
-              config: [
-                GitHubConfig(
+                    color: Colors.purple.shade900,
+                  )
+                ],
+                // color: Colors.blue.shade900,
+                mode: ColorMode.lightOpacity,
+                defaultColor: Colors.white.withAlpha(0),
+              ),
+              ActivityWidget(
+                config: GitHubConfig(
                   username: 'rsanjuan87',
                   token: githubKey,
-                  color: Colors.blue.shade900,
+                  color: Colors.green.shade900,
                 ),
-                GitLabConfig(
+                mode: ColorMode.lightOpacity,
+                defaultColor: Colors.white.withAlpha(0),
+              ),
+              ActivityWidget(
+                config: GitLabConfig(
                   username: 'rsanjuan87',
                   token: gitlabKey_top,
                   host: 'git.topgroups.travel',
-                  color: Colors.blue.shade900,
-                )
-              ],
-              color: Colors.blue.shade900,
-              mode: ColorMode.lightOpacity,
-              defaultColor: Colors.white.withAlpha(10),
-            ),
-            ActivityWidget(
-              config: GitHubConfig(
-                username: 'rsanjuan87',
-                token: githubKey,
-                color: Colors.green.shade900,
+                  color: Colors.orange.shade900,
+                ),
+                mode: ColorMode.lightOpacity,
+                defaultColor: Colors.white.withAlpha(0),
               ),
-              color: Colors.green.shade900,
-              mode: ColorMode.lightOpacity,
-              defaultColor: Colors.white.withAlpha(10),
-            ),
-            ActivityWidget(
-              config: GitLabConfig(
-                username: 'rsanjuan87',
-                token: gitlabKey_top,
-                host: 'git.topgroups.travel',
-                color: Colors.orange.shade900,
-              ),
-              color: Colors.orange.shade900,
-              mode: ColorMode.lightOpacity,
-              defaultColor: Colors.white.withAlpha(10),
-            ),
-          ],
+            ],
+          ),
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

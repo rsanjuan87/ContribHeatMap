@@ -1,3 +1,9 @@
+import 'dart:math';
+
+import 'dart:math';
+
+import 'package:activity_graph/heatmap_calendar/flutter_heatmap_calendar.dart';
+import 'package:activity_graph/heatmap_calendar/src/widget/heatmap_column.dart';
 import 'package:flutter/material.dart';
 
 import '../../../ActivityGraph.dart';
@@ -15,6 +21,9 @@ class HeatMapContainer extends StatelessWidget {
   final bool? showText;
   final Function(DateTime dateTime)? onClick;
   final Map<GitHubConfig, int> map;
+  final int? maxValue;
+  final ColorMode colorMode;
+  final int configsCount;
 
   const HeatMapContainer({
     Key? key,
@@ -29,6 +38,9 @@ class HeatMapContainer extends StatelessWidget {
     this.onClick,
     this.showText,
     required this.map,
+    required this.maxValue,
+    required this.colorMode,
+    this.configsCount = 0,
   }) : super(key: key);
 
   @override
@@ -40,13 +52,13 @@ class HeatMapContainer extends StatelessWidget {
         color: backgroundColor ?? HeatMapColor.defaultColor,
         borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 5)),
       ),
-      child: Wrap(
+      child: Stack(
         children: map.keys
             .map((e) => AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOutQuad,
-                  width: (size ?? 0) / (map.isEmpty ? 1 : map.length),
-                  height: (size ?? 0) / (map.isEmpty ? 1 : map.length),
+                  width: (size ?? 0),// / max(sqrt(configsCount).round() as double, 2) ,//(map.isEmpty ? 1 : map.length),
+                  height: (size ?? 0),// / max(sqrt(configsCount).round() as double, 2) , //(map.isEmpty ? 1 : map.length),
                   alignment: Alignment.center,
                   child: (showText ?? true)
                       ? Text(
@@ -57,12 +69,21 @@ class HeatMapContainer extends StatelessWidget {
                         )
                       : null,
                   decoration: BoxDecoration(
-                    color: e.color,
+                    color: map[e] != 0
+                        // If colorMode is ColorMode.opacity,
+                        ? HeatMapColumn.getColor(
+                            colorMode,
+                            {0: e.color ?? Colors.green.shade700},
+                            maxValue,
+                            backgroundColor,
+                            map[e]??0,
+                          )
+                        : null,
                     borderRadius:
                         BorderRadius.all(Radius.circular(borderRadius ?? 5)),
                   ),
                 ))
-            .toList(),
+            .toList().reversed.toList(),
       ),
     );
     return Padding(

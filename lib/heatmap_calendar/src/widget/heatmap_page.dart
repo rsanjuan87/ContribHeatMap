@@ -80,6 +80,8 @@ class HeatMapPage extends StatelessWidget {
   /// Function that will be called to generate tooltip.
   String? Function(int, DateTime)? tooltipGenerator;
 
+  final int configsCount;
+
   HeatMapPage({
     Key? key,
     required this.colorMode,
@@ -96,6 +98,7 @@ class HeatMapPage extends StatelessWidget {
     this.margin,
     this.showText,
     this.tooltipGenerator,
+    this.configsCount = 0,
   })  : _dateDifferent = endDate.difference(startDate).inDays,
         maxValue = DatasetsUtil.getMaxValue(datasets),
         super(key: key);
@@ -137,6 +140,7 @@ class HeatMapPage extends StatelessWidget {
         datasets: datasets,
         showText: showText,
         tooltipGenerator: tooltipGenerator,
+          configsCount: configsCount,
       ));
 
       // also add first day's month information to _firstDayInfos list.
