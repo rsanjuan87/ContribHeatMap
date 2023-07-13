@@ -53,37 +53,47 @@ class HeatMapContainer extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 5)),
       ),
       child: Stack(
-        children: map.keys
-            .map((e) => AnimatedContainer(
+        children: [
+          ...map.keys
+              .map(
+                (e) => AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOutQuad,
-                  width: (size ?? 0),// / max(sqrt(configsCount).round() as double, 2) ,//(map.isEmpty ? 1 : map.length),
-                  height: (size ?? 0),// / max(sqrt(configsCount).round() as double, 2) , //(map.isEmpty ? 1 : map.length),
+                  width: (size ?? 0),
+                  // / max(sqrt(configsCount).round() as double, 2) ,//(map.isEmpty ? 1 : map.length),
+                  height: (size ?? 0),
+                  // / max(sqrt(configsCount).round() as double, 2) , //(map.isEmpty ? 1 : map.length),
                   alignment: Alignment.center,
-                  child: (showText ?? true)
-                      ? Text(
-                          date.day.toString(),
-                          style: TextStyle(
-                              color: textColor ?? const Color(0xFF8A8A8A),
-                              fontSize: fontSize),
-                        )
-                      : null,
                   decoration: BoxDecoration(
                     color: map[e] != 0
                         // If colorMode is ColorMode.opacity,
                         ? HeatMapColumn.getColor(
-                            colorMode,
+                      colorMode,
                             {0: e.color ?? Colors.green.shade700},
                             maxValue,
                             backgroundColor,
-                            map[e]??0,
+                            map[e] ?? 0,
                           )
                         : null,
                     borderRadius:
                         BorderRadius.all(Radius.circular(borderRadius ?? 5)),
                   ),
-                ))
-            .toList().reversed.toList(),
+                ),
+              )
+              .toList()
+              .reversed
+              .toList(),
+          if (showText ?? true)
+            Center(
+              child: Text(
+                date.day.toString(),
+                style: TextStyle(
+                    color: textColor ?? const Color(0xFF8A8A8A),
+                    fontSize: fontSize),
+                textAlign: TextAlign.center,
+              ),
+            ),
+        ],
       ),
     );
     return Padding(

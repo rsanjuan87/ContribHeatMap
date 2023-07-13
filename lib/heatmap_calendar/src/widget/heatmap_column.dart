@@ -200,7 +200,7 @@ class HeatMapColumn extends StatelessWidget {
         color = vv == 1 ? null : color?.lighten(vv.clamp(0, 1) / 2.0);
         break;
       case ColorMode.opacity:
-        color = colorsets?.values.first.withOpacity(v);
+        color = colorsets?.values.first.withOpacity((.2 + v).clamp(0, 1));
         break;
       case ColorMode.color:
         color = colorsets?.values.first;
@@ -208,7 +208,7 @@ class HeatMapColumn extends StatelessWidget {
     }
 
     if (colorMode == ColorMode.lightOpacity && v != 1) {
-      color = color?.withOpacity((.5 + v).clamp(0, 1));
+      color = color?.withOpacity((.2 + v).clamp(0, 1));
     }
 
     return color;

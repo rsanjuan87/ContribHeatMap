@@ -10,7 +10,6 @@ import 'dart:convert';
 import 'heatmap_calendar/src/data/heatmap_color_mode.dart';
 import 'heatmap_calendar/src/heatmap.dart';
 
-
 class GitHubConfig {
   final String username;
   final String token;
@@ -19,8 +18,8 @@ class GitHubConfig {
   GitHubConfig({
     required this.username,
     required this.token,
-    required this.color,
-  });
+    Color? color,
+  }) : this.color = color ?? Colors.green.shade900;
 }
 
 class GitLabConfig extends GitHubConfig {
@@ -31,9 +30,9 @@ class GitLabConfig extends GitHubConfig {
   GitLabConfig({
     required super.username,
     required super.token,
-    required super.color,
+    Color? color,
     this.host,
-  });
+  }): super(color: color ?? Colors.purple.shade900);
 }
 
 class ActivityWidget extends StatefulWidget {
@@ -237,7 +236,6 @@ class _ActivityWidgetState extends State<ActivityWidget> {
 
             map[config] = c + 1;
             activityDates[date] = map;
-
           }
         }
         setState(() {});

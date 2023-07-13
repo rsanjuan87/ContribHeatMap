@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
         //       fit: BoxFit.cover,
         //     )),
         child: Container(
-          color: Colors.black,
+          color: Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,13 +87,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   GitHubConfig(
                     username: 'rsanjuan87',
                     token: githubKey,
-                    color: Colors.green.shade900,
                   ),
                   GitLabConfig(
                     username: 'rsanjuan87',
                     token: gitlabKey_top,
                     host: 'git.topgroups.travel',
-                    color: Colors.purple.shade900,
+                    color: Colors.orange.shade900,
                   )
                 ],
                 // color: Colors.blue.shade900,
@@ -114,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   username: 'rsanjuan87',
                   token: gitlabKey_top,
                   host: 'git.topgroups.travel',
-                  color: Colors.orange.shade900,
+                  color: Colors.purple.shade900,
                 ),
                 mode: ColorMode.lightOpacity,
                 defaultColor: Colors.white.withAlpha(0),
